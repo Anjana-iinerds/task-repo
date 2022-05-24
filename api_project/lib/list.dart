@@ -12,56 +12,78 @@ class listpage extends StatefulWidget {
 
 class _listpageState extends State<listpage> {
   
-  Future<List<User>> _getUsers() async{
+  void getData() async{
 
     var data = await  http.get(Uri.https('jsonplaceholder.typicode.com', 'users'));
 
     var jsonData =json.decode(data.body);
-
-    List<User> users = [];
-    for(var u in jsonData){
-      User user =User(u['id'], u['name'], u['username'], u['email'], u['address'], u['phone'], u['website'],u['company']);
-      users.add(user);
-    }
-    print(users.length);
-    return users;
-  }
+    
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder(
-        future: _getUsers(),
-        builder: (BuildContext context,AsyncSnapshot snapshot){
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (BuildContext context, int index){
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
-                child: Card(
-                  child: ListTile(
-                    title: Text(snapshot.data[index].name),
-                    leading:Text(snapshot.data[index].username),
-                    trailing: Text(snapshot.data[index].email),
-                    
+
+        return Container(
+          child: FutureBuilder(builder: (BuildContext context, AsyncSnapshot snapshot){
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index){
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(snapshot.data[index].name),
+                      leading:Text(snapshot.data[index].username),
+                      trailing: Text(snapshot.data[index].email),
+                    ),
                   ),
-                ),
-              );
+                  );
+              }
+            );
+              },
+            ),
+        );
           }
-          );
-        }
-        ),
-    );
-  }
-}
-class User{
-  final int id,phone;
-  final String name;
-  final String username;
-  final String email;
-  final String address;
-  final String website;
-  final String company;
+    }
+      @override
+       Widget build(BuildContext context) {
+        return Container();
+      }
+      }
+class Users{
+  String name;
+  String username;
+  String email;
+  List<Address> address;
 
-  User(this.id, this.name, this.username, this.email, this.address, this.phone, this.website, this.company);
-}
+  Users({required this.name, required this.username, required this.email, required this.address});
 
+  Users.fromJson(Map<String, dynamic> usersJson)
+  : name = usersJson['name'],
+  username = usersJson['username'],
+  email = usersJson['email'],
+  address = List.from(usersJson['address'])
+  .map((address) => Address.fromJson(address)).toList();
+}
+class Address{
+  String street;
+  String suite;
+  String city;
+  String zipcode;
+  Company company;
+
+  Address.fromJson(Map<String, dynamic> addressJson)
+  :street =addressJson['street'],
+   suite = addressJson['suite'],
+   city = addressJson['city'],
+   zipcode = addressJson['zipcode'],
+   company = Company.fromJson(addressJson['company']);
+}
+class Company{
+  String name;
+  String catchPhrase;
+  String bs;
+
+  Company.fromJson(Map<String, dynamic> companyJson)
+  :name = companyJson['name'],
+   catchPhrase = companyJson['catchPhrase'],
+   bs = companyJson['bs'];
+}
