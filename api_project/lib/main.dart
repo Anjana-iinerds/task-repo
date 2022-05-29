@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:core';
 import 'package:api_project/list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 
-void main() => runApp(MaterialApp(
+void main() => runApp(
+  MaterialApp(
   home: Screen(),
   debugShowCheckedModeBanner: false,
 ));
