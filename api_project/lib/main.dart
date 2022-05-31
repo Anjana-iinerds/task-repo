@@ -1,3 +1,4 @@
+import 'package:api_project/register.dart';
 import 'package:api_project/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,7 +20,6 @@ class MyApp extends StatelessWidget {
 }
 class Body extends StatefulWidget {
   const Body({super.key});
-
   @override
   State<Body> createState() => _BodyState();
 }
@@ -30,11 +30,17 @@ class _BodyState extends State<Body> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Center(
-          child: Text("Have an Account? Sign up",
+        actions:[
+          TextButton(
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder:(context) => Registerpage()),);
+              },
+              child: Text('Signup',
+              style: TextStyle(color: Colors.deepPurple),),
+            ),   ],
+          title:Text("Have an Account?",
           style: TextStyle(color: Colors.black,fontSize: 13),
           ),
-        ),
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -76,7 +82,8 @@ class _BodyState extends State<Body> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.visiblePassword,
+            obscureText: true,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Password',
@@ -85,6 +92,7 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
+
         SizedBox(height: 50,),
 
         Padding(
@@ -101,6 +109,7 @@ class _BodyState extends State<Body> {
           )
           ),
         ),
+
         SizedBox(height: 30,),
         
         Text(' Or Sign in With',
@@ -110,6 +119,7 @@ class _BodyState extends State<Body> {
         ),
 
         SizedBox(height: 15,),
+
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Center(
@@ -122,6 +132,7 @@ class _BodyState extends State<Body> {
                   child: FaIcon(FontAwesomeIcons.google,size: 25,color: Colors.blue),
                 ),
                 SizedBox(width: 58,),
+
                 GestureDetector(
                   onTap: () {},
                   child: FaIcon(FontAwesomeIcons.facebook,size: 25,color: Colors.blue[900],),
