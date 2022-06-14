@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:api_project/list.dart';
+import 'package:api_project/usersmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class Screen extends StatefulWidget {
   const Screen({super.key});
@@ -37,7 +39,16 @@ class _ScreenState extends State<Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Details'),),
-      body:Container(
+       body: ChangeNotifierProvider(create: (context) => UsersModel(),
+      child: Builder(builder: (context){
+        final model =Provider.of<UsersModel>(context);
+        if (model.newState == NewState.Loading){
+          return Center( child: CircularProgressIndicator());
+        }
+        if (model.newState == NewState.Error){
+          return Center( child: Text('An error occured ${model.message}'));
+      }
+      return Container(
           child: Center(
             child: ListView.builder(
               itemCount:_list.length,
@@ -87,7 +98,12 @@ class _ScreenState extends State<Screen> {
             }),
           ),
 
-        ),
+        );
+      }
+      ),
+  
+      ),
+      
       );
     
   }

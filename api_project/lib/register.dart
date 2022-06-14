@@ -1,11 +1,23 @@
+import 'dart:io';
+import 'dart:async';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-class Registerpage extends StatelessWidget {
-   Registerpage({super.key});
-  final _formKey = GlobalKey<FormState>();
+class Registerpage extends StatefulWidget {
+  const Registerpage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<Registerpage> createState() => _RegisterpageState();
+}
+
+class _RegisterpageState extends State<Registerpage> {
+  
+
+  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {   
     return Scaffold(
       appBar: AppBar(title: Text('Register Page')),
        body: SizedBox(
@@ -17,33 +29,97 @@ class Registerpage extends StatelessWidget {
       children: [
         Text("Register Here",
         style: TextStyle(
-          fontSize: 28,
+          fontSize: 25,
           fontWeight: FontWeight.bold,
           color: Colors.black,
           height: 3,
         ),
         ),
-        SizedBox(height: 15,),
+      
+        SizedBox(height: 13,),
         Stack(    
           children: [
             Container(
+              margin: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+              child:CircleAvatar(
+                radius: 68,
+                backgroundColor: Colors.purple[600],
+                
               child: CircleAvatar(
-                radius: 55,
-                backgroundColor: Colors.purple[400],
-              
-              child: Positioned(
-                child: MaterialButton(onPressed: (){},
-                elevation: 1.0,
+                child: ClipOval(),
+                radius: 62,
+                backgroundColor: Colors.white70,
+                backgroundImage
+                :AssetImage('assets/images/ks5RTu.jpg') 
+                    
+                ) ,
+              ),
+              ),
+            
+                  
+              Positioned(  
+                bottom: 10,
+                left: 70,
+                child: RawMaterialButton(
+                  fillColor: Colors.purple[600],
                 child: Icon(Icons.add_a_photo_outlined,
-                color: Colors.white,),
-                padding:EdgeInsets.all(10),
+                color: Colors.white,),    
                 shape: CircleBorder(),
-                ),)
-            )
-            )
+                  onPressed: (){showDialog(context: context, builder: (BuildContext context) {
+                   return AlertDialog(
+                     title: Text('Choose an option',
+                     style: TextStyle(fontWeight: FontWeight.w500,color: Colors.purple[800]),
+                     ),
+                     content: SingleChildScrollView(
+                       child: ListBody(children: [
+                         InkWell(
+                           onTap: () {
+                             },
+                           splashColor: Colors.purpleAccent,
+                           child: Row(
+                             children: [
+                               Padding(
+                                 padding: const EdgeInsets.all(10.0),
+                                 child: Icon(Icons.camera_alt,color: Colors.purpleAccent,),
+                               ),
+                               Text('Camera',
+                               style: TextStyle(
+                                 fontSize: 18,color: Colors.black,fontWeight: FontWeight.w500
+                               ),)
+                             ],
+                           ),
+                         ),
+                         InkWell(
+                           onTap: () {
+                             
+                           },
+
+                           splashColor: Colors.purpleAccent,
+                           child: Row(
+                             children: [
+                               Padding(
+                                 padding: const EdgeInsets.all(10.0),
+                                 child: Icon(Icons.image,color: Colors.purpleAccent,),
+                               ),
+                               Text('Gallery',
+                               style: TextStyle(
+                                 fontSize: 18,color: Colors.black,fontWeight: FontWeight.w500
+                               ),)
+                             ],
+                           ),
+                         ),
+                       ]),
+                     ),
+                   ); 
+                  });
+                  
+                },
+                
+                ),),
           ],
-        ),
-        SizedBox(height: 15),
+            ),
+            SizedBox(height: 15),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
             child: TextFormField(
@@ -56,7 +132,7 @@ class Registerpage extends StatelessWidget {
             ),
           
         ),
-        SizedBox(height: 25,),
+        SizedBox(height: 23,),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Form(
@@ -71,19 +147,19 @@ class Registerpage extends StatelessWidget {
               ),
               validator: (value){
                 if(value!.isEmpty){
-                  return 'Enter valid email';
+                  return 'This field is required';
                 }
                 return null;
               }
             ),
           ),
         ),
-        SizedBox(height: 25,),
+        SizedBox(height: 23,),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Form(
-            key: _formKey,
+            key: _formKey1,
             child: TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               keyboardType: TextInputType.phone,
@@ -94,21 +170,22 @@ class Registerpage extends StatelessWidget {
               ),
               validator: (value){
                 if (value!.isEmpty){
-                  return 'Enter valid phone number';
+                  return 'This field is required';
                 }
                 return null;
               }
             ),
           ),
         ),
-        SizedBox(height: 30,),
+
+        SizedBox(height: 27,),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: MaterialButton(onPressed: () {
             _formKey.currentState!.validate();
           },
-          height: 55,
+          height: 53,
           minWidth: 790,
           color: Colors.deepPurple,
           child: Text('Register',
@@ -118,9 +195,15 @@ class Registerpage extends StatelessWidget {
           ),
         ),
 
-      ]
-      ),
-    ),
-    );   
+ 
+      
+      ]  
+       ),
+       ),
+       );
+        
+        
+              
+      
   }
 }
