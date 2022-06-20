@@ -2,8 +2,39 @@ import 'package:api_project/register.dart';
 import 'package:api_project/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() {
+const AndroidNotificationChannel channel =AndroidNotificationChannel(
+  'high_importance_channel',
+   'high Importance Notifications',
+   importance: Importance.high,
+   playSound: true
+   );
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();   
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
+Future<void> main() async { 
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(apiKey: 'key',appId: 'key',messagingSenderId: 'key',projectId: 'key')
+  );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await flutterLocalNotificationsPlugin
+  .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+  ?.createNotificationChannel(channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true
+    );
   runApp(const MyApp());
 }
 
@@ -14,7 +45,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Body(),
-     
     );
   }
 }
@@ -26,6 +56,66 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    RemoteNotification notification = message.notification as RemoteNotification;
+    AndroidNotification android = message.notification?.android as AndroidNotification;
+    if(notification != null && android != null){
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+         notification.title, 
+         notification.body, 
+         NotificationDetails(android: AndroidNotificationDetails(
+           channel.id,
+           channel.name,
+           color: Colors.blue,
+           playSound: true,
+           icon: '@mipmap/ic_launcher',
+         ),
+         )
+         );
+    }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new event was published');
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if(notification != null && android != null){
+        showDialog(context: context, builder: (_){
+          return AlertDialog(
+            title: Text(notification.title as String),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(notification.body as String)
+                ],
+              )
+              ),
+          );
+        }
+        );
+      }
+    });
+  }
+  void showNotification(){
+    flutterLocalNotificationsPlugin.show(0, 'Running', 'Welcome Succesfully Registered',NotificationDetails(
+      android: AndroidNotificationDetails(
+        channel.id,
+        channel.name,
+        importance: Importance.high,
+        color: Colors.blue,
+        playSound: true,
+        icon: '@mipmap/ic_launcher'
+
+      )
+    ));
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +123,7 @@ class _BodyState extends State<Body> {
         actions:[
           TextButton(
               onPressed: () {
-                Navigator.push(context,MaterialPageRoute(builder:(context) => Registerpage()),);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Registerpage()),);
               },
               child: Text('Signup',
               style: TextStyle(color: Colors.deepPurple),),
@@ -97,9 +187,7 @@ class _BodyState extends State<Body> {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: MaterialButton(onPressed: () {
-            Navigator.push(context,MaterialPageRoute(builder:(context) => Screen()),);
-          },
+          child: MaterialButton(onPressed: showNotification,
           height: 55,
           minWidth: 790,
           color: Colors.deepPurple[600],

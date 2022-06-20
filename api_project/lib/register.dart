@@ -90,10 +90,8 @@ class _RegisterpageState extends State<Registerpage> {
                            ),
                          ),
                          InkWell(
-                           onTap: () {
-                             
+                           onTap: () {       
                            },
-
                            splashColor: Colors.purpleAccent,
                            child: Row(
                              children: [
@@ -118,6 +116,7 @@ class _RegisterpageState extends State<Registerpage> {
                 ),),
           ],
             ),
+            
             SizedBox(height: 15),
 
         Padding(
